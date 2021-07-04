@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const Exercises = require("./models/exercise");
 
 const databaseUrl = "fitnessTracker";
 const dbConnect = process.env.MONGODB_URI || "mongodb://localhost:27017/" + databaseUrl;
@@ -23,6 +24,13 @@ db.once('open', function() {
     console.log("Successfully connected to MongoDb");
 });
 
+const data = {};
+
+Exercises.create(data)
+  .then(dbSample => {
+    console.log(dbSample);
+  })
+
 app.listen(webPort, () => {
-  console.log(`App running on port http://localhost:${webPort}!`);
+  console.log(`App running on port http://localhost:${webPort}`);
 });
