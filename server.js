@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Exercises = require("./models/exercise");
+const routes = require("./controllers");
 
 const databaseUrl = "fitnessTracker";
 const dbConnect = process.env.MONGODB_URI || "mongodb://localhost:27017/" + databaseUrl;
@@ -10,8 +11,9 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 app.use(express.static("public"));
+// Set to use the [Routes]
+app.use(routes);
 
 mongoose.connect(dbConnect, {
   useNewUrlParser: true,
