@@ -1,6 +1,5 @@
 const express = require("express");
 const routes = require("./controllers");
-const mongoose = require("./config/connection");
 
 const webPort = process.env.PORT || 3000;
 

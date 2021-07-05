@@ -7,8 +7,7 @@ const cardioSchema = new Schema({
         default: () => new Date()
     },
     exerciseName: {
-        name: String,
-        trim: true
+        name: String
     },
     distanceMiles: {
         type: Number
@@ -18,6 +17,6 @@ const cardioSchema = new Schema({
     }
 });
 
-const cardio = mongoose.model("Cardio", cardioSchema);
+const Cardio = mongoose.model("Cardio", cardioSchema, "Cardio");
 
-module.exports = cardio;
+module.exports = Cardio;

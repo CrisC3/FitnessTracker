@@ -7,10 +7,9 @@ const resistanceSchema = new Schema({
         default: () => new Date()
     },
     exerciseName: {
-        name: String,
-        trim: true
+        name: String
     },
-    weight: {
+    weightLbs: {
         type: Number
     },
     sets: {
@@ -19,11 +18,11 @@ const resistanceSchema = new Schema({
     reps: {
         type: Number
     },
-    duration: {
+    durationMins: {
         type: Number
     }
 });
 
-const resistance = mongoose.model("Resistance", resistanceSchema);
+const Resistance = mongoose.model("Resistance", resistanceSchema, "Resistance");
 
-module.exports = resistance;
+module.exports = Resistance;

@@ -1,6 +1,6 @@
 // Calls to packages/routes
 const router = require("express").Router();
-const models = require("../models");
+const {Cardio, Resistance} = require("../models");
 
 // const apiRoutes = require("./api");
 const webRoutes = require("./webRoutes");
