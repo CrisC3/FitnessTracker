@@ -1,11 +1,12 @@
 
 const mongoose = require("mongoose");
-const databaseUrl = "fitnessTracker";
+const databaseUrl = "workout";
 const dbConnect = process.env.MONGODB_URI || "mongodb://localhost:27017/" + databaseUrl;
 
 mongoose.connect(dbConnect, {
     useNewUrlParser: true,
-    useFindAndModify: false
+    useFindAndModify: false,
+    useUnifiedTopology: true
 });
   
 const db = mongoose.connection;
