@@ -39,12 +39,14 @@ router.get("/workouts/range", async (req, res) => {
             // Find the element index of the existing date (day)
             let dayExistIndex = workoutRangeArr.findIndex(elem => elem.day == dailyWorkout.day);
 
-            // If the for in variable, dailyWorkout day matches, then update
+            // If the for in variable, dailyWorkout day matches, then update by
+            // adding existing exercises and total duration, into a single day
             if (dailyWorkout.day == workoutRangeArr[dayExistIndex].day) {
                 workoutRangeArr[dayExistIndex].exercises.push(dailyWorkout.exercises[0]);
                 workoutRangeArr[dayExistIndex].totalDuration += dailyWorkout.totalDuration;
             }
 
+            //#region previous code
             // for(let i = 0; i < workoutRangeArr.length; i++) {
             //     if (dailyWorkout.day == workoutRangeArr[i].day) {
             //         workoutRangeArr[i].exercises.push(dailyWorkout.exercises[0]);
@@ -52,6 +54,7 @@ router.get("/workouts/range", async (req, res) => {
             //         break;
             //     }
             // }
+            //#endregion
         }
         
     }
