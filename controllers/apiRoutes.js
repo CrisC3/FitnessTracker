@@ -28,13 +28,21 @@ router.get("/workouts/range", async (req, res) => {
             workoutRangeArr.push(workoutRangeObj);
         }
         else {
-            for(let i = 0; i < workoutRangeArr.length; i++) {
-                if (dailyWorkout.day == workoutRangeArr[i].day) {
-                    workoutRangeArr[i].exercises.push(dailyWorkout.exercises[0]);
-                    workoutRangeArr[i].totalDuration += dailyWorkout.totalDuration;
-                    break;
-                }
+            
+            let elemIndex = workoutRangeArr.findIndex(elem => elem.day == dailyWorkout.day);
+
+            if (dailyWorkout.day == workoutRangeArr[elemIndex].day) {
+                workoutRangeArr[elemIndex].exercises.push(dailyWorkout.exercises[0]);
+                workoutRangeArr[elemIndex].totalDuration += dailyWorkout.totalDuration;
             }
+
+            // for(let i = 0; i < workoutRangeArr.length; i++) {
+            //     if (dailyWorkout.day == workoutRangeArr[i].day) {
+            //         workoutRangeArr[i].exercises.push(dailyWorkout.exercises[0]);
+            //         workoutRangeArr[i].totalDuration += dailyWorkout.totalDuration;
+            //         break;
+            //     }
+            // }
         }
         
     }
