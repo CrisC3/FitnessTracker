@@ -1,11 +1,26 @@
 const router = require("express").Router();
 const db = require("../models");
 
+router.get("/workouts", async (req, res) => {
+    
+    // FUNCTION top-level, local variables
+    const lastWorkout = await db.Workout.aggregate([
+        {
+            $addFields: {
+                totalDuration: {$sum: "$exercises.duration"}
+            }
+        }
+    ]);
+    
+    // Returns the workoutRangeArr variable as JSON
+    res.json(lastWorkout);
+});
+
 router.get("/workouts/range", async (req, res) => {
     
     // FUNCTION top-level, local variables
     let workoutRangeArr = [];
-    const workoutRangeQuery = await await db.Workout.aggregate([
+    const workoutRangeQuery = await db.Workout.aggregate([
         {
             $project: {
                 day: {$substr: ["$day", 0, 10]},
