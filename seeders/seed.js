@@ -126,8 +126,19 @@ const workoutSeed = [
   },
 ];
 
-db.Workout.deleteMany({})
-  .then(() => db.Workout.collection.insertMany(workoutSeed))
+// db.Workout.deleteMany({})
+//   .then(() => db.Workout.collection.insertMany(workoutSeed))
+//   .then((data) => {
+//     console.log(data.result.n + ' records inserted!');
+//     process.exit(0);
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//     process.exit(1);
+//   });
+
+// Use for adding the seed data twice or more times
+  db.Workout.collection.insertMany(workoutSeed)
   .then((data) => {
     console.log(data.result.n + ' records inserted!');
     process.exit(0);
