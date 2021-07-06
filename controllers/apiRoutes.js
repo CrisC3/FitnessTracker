@@ -3,6 +3,7 @@ const db = require("../models");
 
 router.get("/workouts/range", async (req, res) => {
     
+    // FUNCTION top-level, local variables
     let workoutRangeArr = [];
     const workoutRangeQuery = await await db.Workout.aggregate([
         {
@@ -16,12 +17,17 @@ router.get("/workouts/range", async (req, res) => {
         {$sort: {day: 1}}
     ]);
     
+    // Checks every the workoutRangeQuery data
     for await (const dailyWorkout of workoutRangeQuery) {
         
+        // FOR-IN scope variables
         let workoutRangeObj = {};
         const found = workoutRangeArr.some(el => el.day === dailyWorkout.day);
         
+        // Checks if found variable returns TRUE or FALSE, and reverses the condition
         if (!found) {
+
+            // Adds brand new day entry, since found return FALSE, then condition was reversed
             workoutRangeObj.day = dailyWorkout.day;
             workoutRangeObj.exercises = dailyWorkout.exercises;
             workoutRangeObj.totalDuration = dailyWorkout.totalDuration;
@@ -29,11 +35,14 @@ router.get("/workouts/range", async (req, res) => {
         }
         else {
             
-            let elemIndex = workoutRangeArr.findIndex(elem => elem.day == dailyWorkout.day);
+            // Updates existing entry workout.exercises
+            // Find the element index of the existing date (day)
+            let dayExistIndex = workoutRangeArr.findIndex(elem => elem.day == dailyWorkout.day);
 
-            if (dailyWorkout.day == workoutRangeArr[elemIndex].day) {
-                workoutRangeArr[elemIndex].exercises.push(dailyWorkout.exercises[0]);
-                workoutRangeArr[elemIndex].totalDuration += dailyWorkout.totalDuration;
+            // If the for in variable, dailyWorkout day matches, then update
+            if (dailyWorkout.day == workoutRangeArr[dayExistIndex].day) {
+                workoutRangeArr[dayExistIndex].exercises.push(dailyWorkout.exercises[0]);
+                workoutRangeArr[dayExistIndex].totalDuration += dailyWorkout.totalDuration;
             }
 
             // for(let i = 0; i < workoutRangeArr.length; i++) {
@@ -46,9 +55,8 @@ router.get("/workouts/range", async (req, res) => {
         }
         
     }
-
-    console.log(workoutRangeArr);
-
+    
+    // Returns the workoutRangeArr variable as JSON
     res.json(workoutRangeArr);
 });
 
