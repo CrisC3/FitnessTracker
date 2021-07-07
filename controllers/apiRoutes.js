@@ -3,7 +3,7 @@ const mongo = require("mongodb");
 const db = require("../models");
 
 router.get("/workouts", async (req, res) => {
-    
+
     // GET route local variables
     const lastWorkout = await db.Workout.aggregate([
         {
@@ -12,24 +12,29 @@ router.get("/workouts", async (req, res) => {
             }
         }
     ]);
-    
+
     // Returns the variable as JSON
     res.json(lastWorkout);
 });
 
 router.get("/workouts/range", async (req, res) => {
     
+    // GET route local date variables
+    const getRangeDate = new Date();
+    getRangeDate.setDate(getRangeDate.getDate() - 7); // Sets the date back to 7 days
+    getRangeDate.setHours(0, 0, 0, 0); // Sets the time of 7 days back to midnight
+    
     // GET route local variables
     let workoutRangeArr = [];
     const workoutRangeQuery = await db.Workout.aggregate([
+        {$match: {"day": {$gt: getRangeDate}}},
         {
             $project: {
                 day: {$substr: ["$day", 0, 10]},
-                // day: "$day",
                 exercises: "$exercises",
                 totalDuration: {$sum: "$exercises.duration"}
             }
-        },
+        },        
         {$sort: {day: 1}}
     ]);
     
@@ -38,13 +43,14 @@ router.get("/workouts/range", async (req, res) => {
         
         // FOR-IN scope variables
         let workoutRangeObj = {};
-        const found = workoutRangeArr.some(el => el.day === dailyWorkout.day);
+        let dailyWorkoutDay = dailyWorkout.day + "T" + getRangeDate.toISOString().split("T")[1];
+        const found = workoutRangeArr.some(el => el.day === dailyWorkoutDay);
         
         // Checks if found variable returns TRUE or FALSE, and reverses the condition
         if (!found) {
-
+            
             // Adds brand new day entry, since found return FALSE, then condition was reversed
-            workoutRangeObj.day = dailyWorkout.day;
+            workoutRangeObj.day = dailyWorkoutDay;
             workoutRangeObj.exercises = dailyWorkout.exercises;
             workoutRangeObj.totalDuration = dailyWorkout.totalDuration;
             workoutRangeArr.push(workoutRangeObj);
@@ -53,17 +59,17 @@ router.get("/workouts/range", async (req, res) => {
             
             // Updates existing entry workout.exercises
             // Find the element index of the existing date (day)
-            let dayExistIndex = workoutRangeArr.findIndex(elem => elem.day == dailyWorkout.day);
+            let dayExistIndex = workoutRangeArr.findIndex(elem => elem.day == dailyWorkoutDay);
 
             // If the for in variable, dailyWorkout day matches, then update by
             // adding existing exercises and total duration, into a single day
-            if (dailyWorkout.day == workoutRangeArr[dayExistIndex].day) {
+            if (dailyWorkoutDay === workoutRangeArr[dayExistIndex].day) {
                 workoutRangeArr[dayExistIndex].exercises.push(dailyWorkout.exercises[0]);
                 workoutRangeArr[dayExistIndex].totalDuration += dailyWorkout.totalDuration;
             }
-        }        
+        } 
     }
-        
+    
     // Returns the workoutRangeArr variable as JSON
     res.json(workoutRangeArr);
 });
