@@ -1,9 +1,10 @@
 const router = require("express").Router();
+const mongo = require("mongodb");
 const db = require("../models");
 
 router.get("/workouts", async (req, res) => {
     
-    // FUNCTION top-level, local variables
+    // GET route local variables
     const lastWorkout = await db.Workout.aggregate([
         {
             $addFields: {
@@ -12,13 +13,13 @@ router.get("/workouts", async (req, res) => {
         }
     ]);
     
-    // Returns the workoutRangeArr variable as JSON
+    // Returns the variable as JSON
     res.json(lastWorkout);
 });
 
 router.get("/workouts/range", async (req, res) => {
     
-    // FUNCTION top-level, local variables
+    // GET route local variables
     let workoutRangeArr = [];
     const workoutRangeQuery = await db.Workout.aggregate([
         {
@@ -79,9 +80,14 @@ router.get("/workouts/range", async (req, res) => {
 });
 
 router.post("/workouts", async (req, res) => {
-    console.log("****************** /workouts");
-    console.log(req.body);
-    res.json("POST workouts");
+
+    // POST route local variables
+    const ObjectId = mongo.ObjectID;
+    const newWorkout = ObjectId();
+    const newWorkoutObj = { _id: newWorkout};
+
+    // Returns the variable as JSON
+    res.json(newWorkoutObj);
 });
 
 router.put("/workouts/:id", async (req, res) => {
