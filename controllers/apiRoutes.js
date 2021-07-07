@@ -61,39 +61,55 @@ router.get("/workouts/range", async (req, res) => {
                 workoutRangeArr[dayExistIndex].exercises.push(dailyWorkout.exercises[0]);
                 workoutRangeArr[dayExistIndex].totalDuration += dailyWorkout.totalDuration;
             }
-
-            //#region previous code
-            // for(let i = 0; i < workoutRangeArr.length; i++) {
-            //     if (dailyWorkout.day == workoutRangeArr[i].day) {
-            //         workoutRangeArr[i].exercises.push(dailyWorkout.exercises[0]);
-            //         workoutRangeArr[i].totalDuration += dailyWorkout.totalDuration;
-            //         break;
-            //     }
-            // }
-            //#endregion
-        }
-        
+        }        
     }
-    
+        
     // Returns the workoutRangeArr variable as JSON
     res.json(workoutRangeArr);
 });
 
 router.post("/workouts", async (req, res) => {
 
+    //#region Creates new document in MongoDB then pulls ID
+    // // POST route local variables
+    // const newWorkout = await db.Workout.create({});
+
+    // // Returns the variable as JSON
+    // res.json(newWorkout);
+    //#endregion
+
     // POST route local variables
     const ObjectId = mongo.ObjectID;
-    const newWorkout = ObjectId();
-    const newWorkoutObj = { _id: newWorkout};
+    const newWorkoutId = ObjectId();
+    const newWorkoutObj = { _id: newWorkoutId};
 
     // Returns the variable as JSON
     res.json(newWorkoutObj);
 });
 
 router.put("/workouts/:id", async (req, res) => {
-    console.log("****************** /workouts/:id");
-    console.log(req.body);
-    res.json("POST workouts");
+    
+    // PUT route local variables
+    const newWorkoutId = req.params.id;
+    const newWorkout = req.body;
+    const addWorkout = await db.Workout.create(
+        {
+            _id: newWorkoutId,
+            day: Date.now(),
+            exercises: {
+                type: newWorkout.type,
+                name: newWorkout.name,
+                duration: newWorkout.duration,
+                weight: newWorkout.weight,
+                reps: newWorkout.reps,
+                sets: newWorkout.sets,                
+                distance: newWorkout.distance
+            }
+        }
+    );
+    
+    // Returns the variable as JSON
+    res.json(addWorkout);
 });
 
 module.exports = router;

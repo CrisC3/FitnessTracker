@@ -124,6 +124,9 @@ function handleToastAnimationEnd() {
   if (shouldNavigateAway) {
     location.href = "/";
   }
+  else {
+    location.href = "/exercise";
+  }
 }
 
 function clearInputs() {

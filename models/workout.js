@@ -8,6 +8,7 @@ const workoutSchema = new Schema({
     },
     exercises: [
         {
+            _id : false,
             type: { type: String },
             name: { type: String },
             duration: { type: Number },
