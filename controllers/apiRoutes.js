@@ -78,4 +78,16 @@ router.get("/workouts/range", async (req, res) => {
     res.json(workoutRangeArr);
 });
 
+router.post("/workouts", async (req, res) => {
+    console.log("****************** /workouts");
+    console.log(req.body);
+    res.json("POST workouts");
+});
+
+router.put("/workouts/:id", async (req, res) => {
+    console.log("****************** /workouts/:id");
+    console.log(req.body);
+    res.json("POST workouts");
+});
+
 module.exports = router;
