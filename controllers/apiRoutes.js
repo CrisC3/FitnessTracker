@@ -19,15 +19,6 @@ router.get("/workouts", async (req, res) => {
     res.json(lastWorkout);
 });
 
-router.get("/workouts/:id", async (req, res) => {
-
-    // GET route local variables
-    const existsInDb = await db.Workout.findById(req.params.id);
-
-    // Returns the variable as JSON
-    res.json(existsInDb);
-});
-
 router.get("/workouts/range", async (req, res) => {
     
     // GET route local date variables
@@ -57,12 +48,9 @@ router.get("/workouts/range", async (req, res) => {
         },        
         {$sort: {day: 1}}
     ]);
-    let loop = 0;
     
     // Checks every the workoutRangeQuery data
     for await (const dailyWorkout of workoutRangeQuery) {
-        console.log("******************************")
-        console.log("In loop = " + loop++);
         
         // FOR-IN scope variables
         // let dailyWorkoutDay = dailyWorkout.day + "T" + startRangeDate.toISOString().split("T")[1];
@@ -76,12 +64,8 @@ router.get("/workouts/range", async (req, res) => {
         dayEntry.setHours(startRangeDate.getHours(), startRangeDate.getMinutes(), startRangeDate.getSeconds(), startRangeDate.getMilliseconds())
 
         if (new Date(dailyWorkoutDay) > newDay) {
-            console.log("TRUE");
             dayEntry.setDate(dayEntry.getDate() + 1)
         }
-        console.log(newDay);
-        console.log(dailyWorkoutDay);
-        console.log(dayEntry);
         
         let finalDayEntry = dayEntry.toISOString();
         const found = workoutRangeArr.some(el => el.day === finalDayEntry);
@@ -114,6 +98,23 @@ router.get("/workouts/range", async (req, res) => {
     res.json(workoutRangeArr);
 });
 
+router.get("/workouts/:id", async (req, res) => {
+
+    try
+    {
+        // GET route local variables
+        const dataId = req.params.hasOwnProperty("id");
+        const existsInDb = (dataId) ? await db.Workout.findById(req.params.id) : false;
+
+        // Returns the variable as JSON
+        res.json(existsInDb);
+    }
+    catch (error) 
+    {
+        console.log(error);
+    }
+});
+
 router.post("/workouts", async (req, res) => {
 
     //#region Creates new document in MongoDB then pulls ID
@@ -139,27 +140,21 @@ router.put("/workouts/:id", async (req, res) => {
     const newWorkoutId = req.params.id;
     const newWorkout = req.body;
     const addWorkout = await db.Workout.findOneAndUpdate(
-            {
-                _id: newWorkoutId
-            },
-            {
-                day: Date.now(),
-                exercises: {
-                    type: newWorkout.type,
-                    name: newWorkout.name,
-                    duration: newWorkout.duration,
-                    weight: newWorkout.weight,
-                    reps: newWorkout.reps,
-                    sets: newWorkout.sets,                
-                    distance: newWorkout.distance
-                }
-            },
-            {
-                upsert: true,
-                new: true,
-                setDefaultsOnInsert: true
+        { _id: newWorkoutId },
+        {
+            day: Date.now(),
+            exercises: {
+                type: newWorkout.type,
+                name: newWorkout.name,
+                duration: newWorkout.duration,
+                weight: newWorkout.weight,
+                reps: newWorkout.reps,
+                sets: newWorkout.sets,
+                distance: newWorkout.distance
             }
-        )
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
         
     // Returns the variable as JSON
     res.json(addWorkout);
