@@ -1,3 +1,19 @@
+const clientTime = new Date();
+clientTime.setDate(clientTime.getDate()); // Sets the date back to 8 days
+clientTime.setHours(23, 59, 59, 999);
+const resTz = async (timeTemp) => {
+  let localdTim = {};
+  localdTim.dateTime = timeTemp;
+  console.log(localdTim);
+  const settingTz = await fetch("/api/timezone", {
+    method: "POST",
+    body: JSON.stringify(localdTim),
+    headers: { "Content-Type": "application/json" }
+  });
+}
+resTz(clientTime.toISOString());
+
+
 function calculateTotalWeight(data) {
   const totals = [];
 
