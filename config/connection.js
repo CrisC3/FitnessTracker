@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 const databaseUrl = "workout";
 const dbConnect = process.env.MONGODB_URI || "mongodb://localhost:27017/" + databaseUrl;
