@@ -128,10 +128,8 @@ router.put("/workouts/:id", async (req, res) => {
     // PUT route local variables
     const newWorkoutId = req.params.id;
     const newWorkout = req.body;
-    const addWorkout = await db.Workout.create(
-        {
-            _id: newWorkoutId,
-            day: Date.now(),
+    const addWorkout = await db.Workout.findOneAndUpdate({ _id: newWorkoutId }, {
+        day: Date.now(),
             exercises: {
                 type: newWorkout.type,
                 name: newWorkout.name,
@@ -141,8 +139,7 @@ router.put("/workouts/:id", async (req, res) => {
                 sets: newWorkout.sets,                
                 distance: newWorkout.distance
             }
-        }
-    );
+    })
     
     // Returns the variable as JSON
     res.json(addWorkout);
