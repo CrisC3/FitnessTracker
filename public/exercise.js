@@ -19,11 +19,43 @@ let shouldNavigateAway = false;
 
 async function initExercise() {
   let workout;
+  let existsInDb;
 
   if (location.search.split("=")[1] === undefined) {
     workout = await API.createWorkout()
     console.log(workout)
   }
+  else {
+    existsInDb = await API.findWorkout(location.search.split("=")[1]);
+    
+    if (existsInDb) {
+      const evtTrigger = new Event("change");
+    
+    const exercise = existsInDb.exercises[0];
+    console.log(existsInDb);
+    
+    workoutTypeSelect.value = exercise.type;
+    workoutTypeSelect.dispatchEvent(evtTrigger);
+
+    if (workoutType === "resistance") {
+      
+      nameInput.value = exercise.name;
+      weightInput.value = exercise.weight;
+      setsInput.value = exercise.sets;
+      repsInput.value = exercise.reps;
+      resistanceDurationInput.value = exercise.duration;
+  
+    } else if (workoutType === "cardio") {
+      
+      cardioNameInput.value = exercise.name;
+      durationInput.value = exercise.duration
+      distanceInput.value = exercise.distance;
+    }
+
+    validateInputs();
+    }
+  }
+  
   if (workout) {
     location.search = "?id=" + workout._id;
   }

@@ -23,6 +23,16 @@ const API = {
 
     return json;
   },
+  async findWorkout(workoutId) {
+    let res;
+    try {
+      res = await fetch("/api/workouts/" + workoutId);
+    } catch (err) {
+      console.log(err)
+    }
+    
+    return res.json();
+  },
   async createWorkout(data = {}) {
     const res = await fetch("/api/workouts", {
       method: "POST",

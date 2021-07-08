@@ -11,11 +11,21 @@ router.get("/workouts", async (req, res) => {
             $addFields: {
                 totalDuration: {$sum: "$exercises.duration"}
             }
-        }
+        },
+        {$sort: {day: 1}}
     ]);
 
     // Returns the variable as JSON
     res.json(lastWorkout);
+});
+
+router.get("/workouts/:id", async (req, res) => {
+
+    // GET route local variables
+    const existsInDb = await db.Workout.findById(req.params.id);
+
+    // Returns the variable as JSON
+    res.json(existsInDb);
 });
 
 router.get("/workouts/range", async (req, res) => {
@@ -128,19 +138,29 @@ router.put("/workouts/:id", async (req, res) => {
     // PUT route local variables
     const newWorkoutId = req.params.id;
     const newWorkout = req.body;
-    const addWorkout = await db.Workout.findOneAndUpdate({ _id: newWorkoutId }, {
-        day: Date.now(),
-            exercises: {
-                type: newWorkout.type,
-                name: newWorkout.name,
-                duration: newWorkout.duration,
-                weight: newWorkout.weight,
-                reps: newWorkout.reps,
-                sets: newWorkout.sets,                
-                distance: newWorkout.distance
+    const addWorkout = await db.Workout.findOneAndUpdate(
+            {
+                _id: newWorkoutId
+            },
+            {
+                day: Date.now(),
+                exercises: {
+                    type: newWorkout.type,
+                    name: newWorkout.name,
+                    duration: newWorkout.duration,
+                    weight: newWorkout.weight,
+                    reps: newWorkout.reps,
+                    sets: newWorkout.sets,                
+                    distance: newWorkout.distance
+                }
+            },
+            {
+                upsert: true,
+                new: true,
+                setDefaultsOnInsert: true
             }
-    })
-    
+        )
+        
     // Returns the variable as JSON
     res.json(addWorkout);
 });
